@@ -77,14 +77,15 @@
 				<section>
 					<h2>Busca?</h2>
 					<ul>
-						<li class="fragment">Busca por termos, intervalos numéricos, datas, etc</li>
-						<li class="fragment">Busca por relevância</li>
-						<ul class="fragment">
-							<li>TF-IDF</li>
-					 		<li>Okapi BM25</li>
-					 		<li>Divergence from Randomness (DFR)</li>
-					 		<li>Information-based model (IB)</li>
-					 		<li>etc</li>
+						<li>Busca por</li>
+						<ul>
+							<li>termos</li>
+							<li>intervalos numéricos</li>
+							<li>datas</li>
+							<li>termos</li>
+							<li>posicão geográfica</li>
+					 		<li>relevância</li>
+							<li>etc</li>
 						</ul>
 					</ul>
 				</section>
@@ -92,11 +93,9 @@
 				<section>
 					<h2>Escalável?</h2>
 					<ul>
-						<li class="fragment">Indexação e busca é distribuída em nós de um cluster</li>
-						<ul class="fragment">
-							<li>Replicação</li>
-					 		<li>Sharding</li>
-						</ul>
+						<li class="fragment">Busca distribuída provendo escalabilidade horizontal</li>
+						<li class="fragment">Replicação e sharding automáticos</li>
+						
 					</ul>
 				</section>
 
@@ -157,7 +156,7 @@ $ curl -XPUT 'http://localhost:9200/twitter/tweet/1' -d '{
 					GET /{index}/{type}/{id}
 					</code></pre>
 
-					<pre><code data-trim contenteditable class="http">
+					<pre><code data-trim class="http">
 curl -XGET 'http://localhost:9200/twitter/tweet/1'
 {
     "_index" : "meu_indice",
@@ -176,7 +175,7 @@ curl -XGET 'http://localhost:9200/twitter/tweet/1'
 
 
 				<section>
-					<h2>API de Busca</h2>
+					<h2>API de Busca: Consulta</h2>
 					
 					<pre><code data-trim contenteditable>	
 					GET /{index}/_search
@@ -186,7 +185,7 @@ curl -XGET 'http://localhost:9200/twitter/tweet/1'
 					GET /{index}/{type}/_search
 					</code></pre>
 
-					<pre><code data-trim contenteditable class="http">
+					<pre><code data-trim class="http">
 $ curl -XGET 'http://localhost:9200/twitter/_search?q=user:kimchy'
 
 $ curl -XGET 'http://localhost:9200/twitter/tweet,user/_search?q=user:kimchy'
@@ -202,15 +201,11 @@ $ curl -XGET 'http://localhost:9200/twitter/tweet/_search' -d '{
 				</section>
 
 				<section>
-					<h2>API de Busca</h2>
+					<h2>API de Busca: Resposta</h2>
 					
 					<pre><code data-trim>	
 {
-    "_shards":{
-        "total" : 5,
-        "successful" : 5,
-        "failed" : 0
-    },
+    [...]
     "hits":{
         "total" : 1,
         "hits" : [
@@ -234,55 +229,38 @@ $ curl -XGET 'http://localhost:9200/twitter/tweet/_search' -d '{
 
 				<section data-markdown>
 					<script type="text/template">
-					## Tipos de Queries
-					* match
-					* multi match
-					* bool
-					* boosting
-					* common terms
-					* constant score
-					* dis max
-					* filtered
-					* fuzzy like this
-					* fuzzy like this field
-					* function score
-					* fuzzy
-					* geoshape
-					* has child
-					* has parent
-					* ids
-					* indices
-					* match all
-					* more like this
-					* more like this field
-					* nested
-					* prefix
-					* query string
-					* simple query string
-					* range
-					* regexp
-					* span first
-					* span multi term
-					* span near
-					* span not
-					* span or
-					* span term
-					* term
-					* terms
-					* top children
-					* wildcard
-					* minimum should match
-					* multi term query rewrite
-					* template
+					## API de Busca: Queries
+					* Dezenas de tipos de queries e filtros disponíveis
+					 * bool
+					 * function score
+					 * fuzzy
+					 * geoshape
+					 * more like this
+					 * range
+					 * regexp
+					 * wildcard
+					 * ...
 					</script>
 				</section>
 
 
-
+				<section>
+					<h2>Agregações</h2>
+					<ul>
+						<li>Tipos</li>
+						<ul>
+							<li>Bucketing</li>
+							<li>Metrics</li>
+						</ul>
+					</ul>
+				</section>
 
 				<section data-markdown>
+
+
 					<script type="text/template">
 					## Agregações
+					Agregações podem ser aninhadas
 
 ```
 "aggregations" : {
@@ -298,23 +276,6 @@ $ curl -XGET 'http://localhost:9200/twitter/tweet/_search' -d '{
 					</script>
 				</section>
 
-				<section data-markdown>
-					<script type="text/template">
-					## Agregações
-```
-$ curl -XGET 'http://localhost:9200/twitter/tweet/_search?search_type=count' -d '{
-  "aggregations": {
-    "my_agg": {
-      "terms": {
-        "field": "text"
-      }
-    }
-  }
-}
-'
-```
-					</script>
-				</section>
 
 				<section data-markdown>
 					<script type="text/template">
