@@ -1,0 +1,417 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>reveal.js - The HTML Presentation Framework</title>
+
+		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
+		<meta name="author" content="Hakim El Hattab">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="css/reveal.min.css">
+		<link rel="stylesheet" href="css/theme/default.css" id="theme">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+		<script>
+			if( window.location.search.match( /print-pdf/gi ) ) {
+				var link = document.createElement( 'link' );
+				link.rel = 'stylesheet';
+				link.type = 'text/css';
+				link.href = 'css/print/pdf.css';
+				document.getElementsByTagName( 'head' )[0].appendChild( link );
+			}
+		</script>
+
+		<style type="text/css">
+		.reveal section img.nobackground {
+			background: transparent;
+			border: 0px solid;
+			box-shadow: none;
+		}
+		</style>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<div class="slides">
+
+				<section>
+					<h2>Busca e análise de dados escalável em tempo-real</h2>
+					<p>
+						<small>por <a href="http://aeciosantos.com">Aécio Santos</a> / <a href="http://twitter.com/aeciosan">@aeciosan</a></small>
+					</p>
+				</section>
+
+				<section data-markdown>
+					<script type="text/template">
+						Como fazer busca textual em tempo-real em grandes bases dados?
+					</script>
+				</section>
+
+				<section data-markdown>
+					<script type="text/template">
+						Como fazer análise de dados em grandes bases dados?
+					</script>
+				</section>
+				
+				<section>
+					<img src="img/elasticsearch.png" class="nobackground" />
+				</section>
+
+
+				<section>
+					<h2>Busca?</h2>
+					<ul>
+						<li class="fragment">Busca por termos, intervalos numéricos, datas, etc</li>
+						<li class="fragment">Busca por relevância</li>
+						<ul class="fragment">
+							<li>TF-IDF</li>
+					 		<li>Okapi BM25</li>
+					 		<li>Divergence from Randomness (DFR)</li>
+					 		<li>Information-based model (IB)</li>
+					 		<li>etc</li>
+						</ul>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Escalável?</h2>
+					<ul>
+						<li class="fragment">Indexação e busca é distribuída em nós de um cluster</li>
+						<ul class="fragment">
+							<li>Replicação</li>
+					 		<li>Sharding</li>
+						</ul>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Tempo real?</h2>
+					<ul>
+						<li class="fragment">Near realtime</li>
+						<li class="fragment">Latência pequena do momento de indexação até o documento aparecer nas buscas</li>
+						<li class="fragment">Consultas são tipicamente repondidas em poucos ms</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Análise?</h2>
+					<ul>
+						<li class="fragment">Execução consultas ad-hoc aos dados</li>
+						<li class="fragment">Agregação de dados</li>
+						<li class="fragment">Visualização de dados agregados</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Conceitos básicos</h2>
+					<ul>
+						<li>Cluster</li>
+						<li>Node</li>
+						<li>Index</li>
+						<li>Type</li>
+						<li>Document</li>
+						<li>Shards/Replicas</li>
+					</ul>
+				</section>
+
+				<section>
+					<img src="img/elasticsearch-head.png" class="nobackground" />
+				</section>
+
+				<section>
+					<h2>API de indexação</h2>
+					<pre><code data-trim contenteditable>	
+					PUT /{index}/{type}/{?id}
+					</code></pre>
+
+					<pre><code data-trim contenteditable class="http">
+$ curl -XPUT 'http://localhost:9200/twitter/tweet/1' -d '{
+    "user" : "kimchy",
+    "post_date" : "2009-11-15T14:12:12",
+    "message" : "trying out Elasticsearch"
+}
+					</code></pre>
+					
+				</section>
+
+
+				<section>
+					<h2>API de recuperação de dados</h2>
+					<pre><code data-trim contenteditable>	
+					GET /{index}/{type}/{id}
+					</code></pre>
+
+					<pre><code data-trim contenteditable class="http">
+curl -XGET 'http://localhost:9200/twitter/tweet/1'
+{
+    "_index" : "meu_indice",
+    "_type" : "meu_tipo",
+    "_id" : "1",
+    "_version" : 1,
+    "found": true,
+    "_source" : {
+        "empresa" : "kimchy",
+        "pessoas" : "2009-11-15T14:12:12",
+        "message" : "o rato roeu a roupa"
+    }
+}
+					</code></pre>
+				</section>
+
+
+				<section>
+					<h2>API de Busca</h2>
+					
+					<pre><code data-trim contenteditable>	
+					GET /{index}/_search
+					</code></pre>
+
+					<pre><code data-trim contenteditable>	
+					GET /{index}/{type}/_search
+					</code></pre>
+
+					<pre><code data-trim contenteditable class="http">
+$ curl -XGET 'http://localhost:9200/twitter/_search?q=user:kimchy'
+
+$ curl -XGET 'http://localhost:9200/twitter/tweet,user/_search?q=user:kimchy'
+
+$ curl - XGET 'http://localhost:9200/_all/tweet/_search?q=tag:wow'
+
+$ curl -XGET 'http://localhost:9200/twitter/tweet/_search' -d '{
+    "query" : {
+        "term" : { "user" : "kimchy" }
+    }
+}'
+					</code></pre>
+				</section>
+
+				<section>
+					<h2>API de Busca</h2>
+					
+					<pre><code data-trim>	
+{
+    "_shards":{
+        "total" : 5,
+        "successful" : 5,
+        "failed" : 0
+    },
+    "hits":{
+        "total" : 1,
+        "hits" : [
+            {
+                "_index" : "twitter",
+                "_type" : "tweet",
+                "_id" : "1",
+                "_source" : {
+                    "user" : "kimchy",
+                    "postDate" : "2009-11-15T14:12:12",
+                    "message" : "trying out Elasticsearch"
+                }
+            }
+        ]
+    }
+}
+					</code></pre>
+
+				</section>
+
+
+				<section data-markdown>
+					<script type="text/template">
+					## Tipos de Queries
+					* match
+					* multi match
+					* bool
+					* boosting
+					* common terms
+					* constant score
+					* dis max
+					* filtered
+					* fuzzy like this
+					* fuzzy like this field
+					* function score
+					* fuzzy
+					* geoshape
+					* has child
+					* has parent
+					* ids
+					* indices
+					* match all
+					* more like this
+					* more like this field
+					* nested
+					* prefix
+					* query string
+					* simple query string
+					* range
+					* regexp
+					* span first
+					* span multi term
+					* span near
+					* span not
+					* span or
+					* span term
+					* term
+					* terms
+					* top children
+					* wildcard
+					* minimum should match
+					* multi term query rewrite
+					* template
+					</script>
+				</section>
+
+
+
+
+				<section data-markdown>
+					<script type="text/template">
+					## Agregações
+
+```
+"aggregations" : {
+    "<aggregation_name>" : {
+        "<aggregation_type>" : {
+            <aggregation_body>
+        }
+        [,"aggregations" : { [<sub_aggregation>]+ } ]?
+    }
+    [,"<aggregation_name_2>" : { ... } ]*
+}
+```
+					</script>
+				</section>
+
+				<section data-markdown>
+					<script type="text/template">
+					## Agregações
+```
+$ curl -XGET 'http://localhost:9200/twitter/tweet/_search?search_type=count' -d '{
+  "aggregations": {
+    "my_agg": {
+      "terms": {
+        "field": "text"
+      }
+    }
+  }
+}
+'
+```
+					</script>
+				</section>
+
+				<section data-markdown>
+					<script type="text/template">
+					## Agregações
+```
+$ curl -XGET 'http://localhost:9200/twitter/tweet/_search?search_type=count' -d '{
+  "aggregations": {
+    "my_agg": {
+      "terms": {
+        "field": "text"
+      }
+    }
+  }
+}
+'
+```
+					</script>
+				</section>
+
+
+
+
+				<section data-markdown>
+					<script type="text/template">
+					## Agregações
+```
+{
+	"aggregations" : {
+	    "grades_stats" : {
+	    	"stats" : {
+	    		"field" : "grade"
+	    	} 
+    	}
+	}
+}
+```
+```
+{
+    ...
+
+    "aggregations": {
+        "grades_stats": {
+            "count": 6,
+            "min": 60,
+            "max": 98,
+            "avg": 78.5,
+            "sum": 471
+        }
+    }
+}
+```
+					</script>
+				</section>
+
+				<section>
+					<h2>Obrigado!</h2>
+					<p>
+						<small><a href="http://aeciosantos.com">Aécio Santos</a> <br/> <a href="http://twitter.com/aeciosan">@aeciosan</a></small>
+					</p>
+				</section>
+
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.min.js"></script>
+
+		<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: false,
+				progress: true,
+				history: true,
+				center: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+				// Parallax scrolling
+				// parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+				// parallaxBackgroundSize: '2100px 900px',
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
