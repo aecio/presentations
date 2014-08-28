@@ -118,6 +118,19 @@
 					<img src="img/elasticsearch-head.png" class="nobackground" />
 				</section>
 
+        <section>
+          <h2>API</h2>
+            <ul>
+            <li>REST</li>
+            <li>Java</li>
+            <li>Python</li>
+            <li>Ruby</li>
+            <li>PHP</li>
+            <li>JavaScript</li>
+            <li>...</li>
+          </ul>
+        </section>
+
 				<section>
 					
 					<h2>Indexação de Documentos</h2>
@@ -200,9 +213,24 @@ $ curl -XPOST 'http://localhost:9200/twitter/tweet/_search' -d '{
 					</code></pre>
 				</section>
 
+        <section data-markdown>
+          <script type="text/template">
+          ## Busca
+          * Vários de tipos de queries e filtros disponíveis
+           * bool
+           * fuzzy
+           * geoshape
+           * more like this
+           * range
+           * regexp
+           * wildcard
+           * ...
+          </script>
+        </section>
+
 				<section>
 					<h2>Busca</h2>
-					<p>Response</p>
+					<p>Resposta</p>
 					<pre><code data-trim>	
 {
   [...]
@@ -234,23 +262,6 @@ $ curl -XPOST 'http://localhost:9200/twitter/tweet/_search' -d '{
 					</code></pre>
 
 				</section>
-
-
-				<section data-markdown>
-					<script type="text/template">
-					## Busca
-					* Vários de tipos de queries e filtros disponíveis
-					 * bool
-					 * fuzzy
-					 * geoshape
-					 * more like this
-					 * range
-					 * regexp
-					 * wildcard
-					 * ...
-					</script>
-				</section>
-
 
 				<section>
 					<h2>Agregações</h2>
@@ -518,8 +529,20 @@ POST /eleicoes2014/_search
    }
 }
 </code></pre>
-
         </section>
+
+        <section>
+          <h2>Agregações Disponíveis</h2>
+          <ul>
+            <li>min</li>
+            <li>max</li>
+            <li>IPv4 range</li>
+            <li>Date histogram</li>
+            <li>Geo distance</li>
+            <li>...</li>
+          </ul>
+        </section>
+
 
 				<section>
           <h2>Visualização de dados (Kibana)</h2>
