@@ -53,19 +53,17 @@
 				<section>
 					<h2>Busca e análise de dados escalável em tempo-real</h2>
 					<p>
-						<small>por <a href="http://aeciosantos.com">Aécio Santos</a> / <a href="http://twitter.com/aeciosan">@aeciosan</a></small>
+						<small>
+						<a href="http://aeciosantos.com">Aécio Santos</a><br/>
+						<a href="http://twitter.com/aeciosan">@aeciosan</a><br/>
+						<a href="mailto:aecio@zunnit.com">aecio@zunnit.com</a>
+						</small>
 					</p>
 				</section>
 
 				<section data-markdown>
 					<script type="text/template">
-						Como fazer busca textual em tempo-real em grandes bases dados?
-					</script>
-				</section>
-
-				<section data-markdown>
-					<script type="text/template">
-						Como fazer análise de dados em grandes bases dados?
+						Como fazer busca textual e análise de dados em tempo-real em grandes bases dados?
 					</script>
 				</section>
 				
@@ -73,49 +71,35 @@
 					<img src="img/elasticsearch.png" class="nobackground" />
 				</section>
 
-
 				<section>
-					<h2>Busca?</h2>
+					<h2>Busca e análise de dados escalável em tempo-real</h2>
 					<ul>
-						<li>Busca por</li>
-						<ul>
-							<li>termos</li>
-							<li>intervalos numéricos</li>
-							<li>datas</li>
-							<li>termos</li>
-							<li>posicão geográfica</li>
-					 		<li>relevância</li>
-							<li>etc</li>
-						</ul>
-					</ul>
-				</section>
+            <li>Busca por termos, intervalos numéricos, datas, posicão geográfica, relevância, etc</li>
+						<li class="fragment">Execução consultas ad-hoc, agregação e visualização de dados</li>
+            <li class="fragment">Busca distribuída com replicação e sharding automáticos</li>
+            <li class="fragment">Near real-time, latência pequena, respostas em poucos ms</li>
+          </ul>
+        </section>
 
-				<section>
-					<h2>Escalável?</h2>
-					<ul>
-						<li class="fragment">Busca distribuída provendo escalabilidade horizontal</li>
-						<li class="fragment">Replicação e sharding automáticos</li>
-						
-					</ul>
-				</section>
+        <!--
+        <section>
+          <h2>Escalável?</h2>
+          <ul>
+            
+          </ul>
+        </section>
 
-				<section>
-					<h2>Tempo real?</h2>
-					<ul>
-						<li class="fragment">Near realtime</li>
-						<li class="fragment">Latência pequena do momento de indexação até o documento aparecer nas buscas</li>
-						<li class="fragment">Consultas são tipicamente repondidas em poucos ms</li>
-					</ul>
-				</section>
+        <section>
+          <h2>Tempo real?</h2>
+          <ul>
+          </ul>
+        </section>
 
-				<section>
-					<h2>Análise?</h2>
-					<ul>
-						<li class="fragment">Execução consultas ad-hoc aos dados</li>
-						<li class="fragment">Agregação de dados</li>
-						<li class="fragment">Visualização de dados agregados</li>
-					</ul>
-				</section>
+        <section>
+          <h2>Análise?</h2>
+          <ul>
+          </ul>
+        </section>
 
 				<section>
 					<h2>Conceitos básicos</h2>
@@ -128,55 +112,70 @@
 						<li>Shards/Replicas</li>
 					</ul>
 				</section>
+        -->
 
 				<section>
 					<img src="img/elasticsearch-head.png" class="nobackground" />
 				</section>
 
 				<section>
-					<h2>API de indexação</h2>
-					<pre><code data-trim contenteditable>	
+					
+					<h2>Indexação de Documentos</h2>
+					<p>API</p>
+					<pre><code data-trim>	
 					PUT /{index}/{type}/{?id}
 					</code></pre>
-
-					<pre><code data-trim contenteditable class="http">
-$ curl -XPUT 'http://localhost:9200/twitter/tweet/1' -d '{
-    "user" : "kimchy",
-    "post_date" : "2009-11-15T14:12:12",
-    "message" : "trying out Elasticsearch"
-}
-					</code></pre>
 					
-				</section>
-
-
-				<section>
-					<h2>API de recuperação de dados</h2>
-					<pre><code data-trim contenteditable>	
-					GET /{index}/{type}/{id}
+					<p>Exemplos</p>
+					<pre><code data-trim class="http">
+$ curl -XPUT 'http://localhost:9200/twitter/tweet/1' -d '{
+  "user" : "aeciosan",
+  "post_date" : "2014-08-28T14:00:00",
+  "message" : "Testando o ElasticSearch"
+}'
 					</code></pre>
 
 					<pre><code data-trim class="http">
+$ curl -XPUT 'http://localhost:9200/twitter/user/aeciosan' -d '{
+  "user" : "aeciosan",
+  "bio" : "Software Engineer at Zunnit Technologies"
+}
+					</code></pre>
+
+				</section>
+
+
+				<section>
+					<h2>Recuperação de Documentos</h2>
+
+					<p>API</p>
+					<pre><code data-trim>	
+					GET /{index}/{type}/{id}
+					</code></pre>
+
+					<p>Exemplo</p>
+					<pre><code data-trim class="http">
 curl -XGET 'http://localhost:9200/twitter/tweet/1'
 {
-    "_index" : "meu_indice",
-    "_type" : "meu_tipo",
-    "_id" : "1",
-    "_version" : 1,
-    "found": true,
-    "_source" : {
-        "empresa" : "kimchy",
-        "pessoas" : "2009-11-15T14:12:12",
-        "message" : "o rato roeu a roupa"
-    }
-}
+  "_index" : "twitter",
+  "_type" : "tweet",
+  "_id" : "1",
+  "_version" : 1,
+  "found": true,
+  "_source" : {
+    "user" : "aeciosan",
+    "post_date" : "2014-08-28T14:00:00",
+    "message" : "Testando o ElasticSearch"
+  }
+}'
 					</code></pre>
 				</section>
 
 
 				<section>
-					<h2>API de Busca: Consulta</h2>
+					<h2>Busca</h2>
 					
+					<p>API</p>
 					<pre><code data-trim contenteditable>	
 					GET /{index}/_search
 					</code></pre>
@@ -185,42 +184,52 @@ curl -XGET 'http://localhost:9200/twitter/tweet/1'
 					GET /{index}/{type}/_search
 					</code></pre>
 
+					<p>Exemplos</p>
 					<pre><code data-trim class="http">
-$ curl -XGET 'http://localhost:9200/twitter/_search?q=user:kimchy'
+$ curl -XGET 'http://localhost:9200/twitter/_search?q=user:aeciosan'
 
-$ curl -XGET 'http://localhost:9200/twitter/tweet,user/_search?q=user:kimchy'
+$ curl -XGET 'http://localhost:9200/twitter/tweet,user/_search?q=user:aeciosan'
 
-$ curl - XGET 'http://localhost:9200/_all/tweet/_search?q=tag:wow'
+$ curl -XGET 'http://localhost:9200/_all/tweet/_search?q=message:elasticsearch'
 
-$ curl -XGET 'http://localhost:9200/twitter/tweet/_search' -d '{
-    "query" : {
-        "term" : { "user" : "kimchy" }
-    }
+$ curl -XPOST 'http://localhost:9200/twitter/tweet/_search' -d '{
+  "query" : {
+    "term" : { "message" : "elasticsearch" }
+  }
 }'
 					</code></pre>
 				</section>
 
 				<section>
-					<h2>API de Busca: Resposta</h2>
-					
+					<h2>Busca</h2>
+					<p>Response</p>
 					<pre><code data-trim>	
 {
-    [...]
-    "hits":{
-        "total" : 1,
-        "hits" : [
-            {
-                "_index" : "twitter",
-                "_type" : "tweet",
-                "_id" : "1",
-                "_source" : {
-                    "user" : "kimchy",
-                    "postDate" : "2009-11-15T14:12:12",
-                    "message" : "trying out Elasticsearch"
-                }
-            }
-        ]
-    }
+  [...]
+  "hits": [
+     {
+        "_index": "twitter",
+        "_type": "tweet",
+        "_id": "1",
+        "_score": 0.15342641,
+        "_source": {
+           "user": "aeciosan",
+           "post_date": "2014-08-28T14:00:00",
+           "message": "Testando o ElasticSearch"
+        }
+     },
+     {
+        "_index": "twitter",
+        "_type": "tweet",
+        "_id": "2",
+        "_score": 0.11506981,
+        "_source": {
+           "user": "aeciosan",
+           "post_date": "2014-08-28T14:01:00",
+           "message": "Apresentação sobre ElasticSearch no BH-TEC Talks"
+        }
+     }
+  ]
 }
 					</code></pre>
 
@@ -229,10 +238,9 @@ $ curl -XGET 'http://localhost:9200/twitter/tweet/_search' -d '{
 
 				<section data-markdown>
 					<script type="text/template">
-					## API de Busca: Queries
-					* Dezenas de tipos de queries e filtros disponíveis
+					## Busca
+					* Vários de tipos de queries e filtros disponíveis
 					 * bool
-					 * function score
 					 * fuzzy
 					 * geoshape
 					 * more like this
@@ -247,17 +255,17 @@ $ curl -XGET 'http://localhost:9200/twitter/tweet/_search' -d '{
 				<section>
 					<h2>Agregações</h2>
 					<ul>
-						<li>Tipos</li>
+            <li>Computações sobre os resultados de uma busca</li>
+						<li>Tipos:</li>
 						<ul>
-							<li>Bucketing</li>
 							<li>Metrics</li>
+              <li>Bucketing</li>
 						</ul>
 					</ul>
 				</section>
 
+        <!--
 				<section data-markdown>
-
-
 					<script type="text/template">
 					## Agregações
 					Agregações podem ser aninhadas
@@ -275,65 +283,262 @@ $ curl -XGET 'http://localhost:9200/twitter/tweet/_search' -d '{
 ```
 					</script>
 				</section>
+        -->
+
+        <section>
+          
+          <h2>Exemplo: Dados</h2>
+          <p>698 documentos: dep_federal</p>
+<pre><code data-trim class="http">
+POST /eleicoes2014/dep_federal
+{
+    "partido": "PARTIDO",
+    "nome": "NOME",
+    "numero": 9999,
+    "coligacao": "PARTIDO1 / PARTIDO2 / PARTIDO3"
+}
+</code></pre>
+
+<p>1200 documentos: dep_estadual</p>
+<pre><code data-trim class="http">
+POST /eleicoes2014/dep_estadual
+{
+    "partido": "PARTIDO",
+    "nome": "NOME",
+    "numero": 99999,
+    "coligacao": "PARTIDO1 / PARTIDO2 / PARTIDO3"
+}
+</code></pre>
+
+        </section>
 
 
-				<section data-markdown>
-					<script type="text/template">
-					## Agregações
-```
-$ curl -XGET 'http://localhost:9200/twitter/tweet/_search?search_type=count' -d '{
-  "aggregations": {
-    "my_agg": {
-      "terms": {
-        "field": "text"
+        <section>
+          
+          <h2>Exemplo 1</h2>
+
+<pre><code data-trim class="http">
+POST /eleicoes2014/_search?q=nome:joao
+{
+   "size": 2,
+   "aggregations": {
+       "tipo_de_candidato": {
+           "terms": {
+                "field": "_type"
+            }
+       }
+   }
+}
+</code></pre>
+
+        </section>
+
+        <section>
+          
+          <h2>Exemplo 1: Resultado</h2>
+
+<pre><code data-trim class="json">
+{
+  [...],
+  "hits": {
+      "total": 8,
+      "max_score": 3.9395654,
+      "hits": [
+         {
+            "_index": "eleicoes2014",
+            "_type": "dep_estadual",
+            "_id": "SnF_6YnkRTORfbhjtYSJFg",
+            "_score": 3.9395654,
+            "_source": {
+               "partido": "PT do B",
+               "nome": "JOAO CLEBER",
+               "numero": "70295",
+               "coligacao": "PTdo B"
+            }
+         },
+         {
+            "_index": "eleicoes2014",
+            "_type": "dep_estadual",
+            "_id": "zVf6kJ3WSIaWIkDrSGyR_A",
+            "_score": 3.6575189,
+            "_source": {
+               "partido": "PTN",
+               "nome": "PASTOR JOAO",
+               "numero": "19100",
+               "coligacao": "PTN / PSDC"
+            }
+         }
+      ]
+   },
+   "aggregations": {
+      "tipo_de_candidato": {
+         "buckets": [
+            {
+               "key": "dep_estadual",
+               "doc_count": 6
+            },
+            {
+               "key": "dep_federal",
+               "doc_count": 2
+            }
+         ]
+      }
+   }
+}
+</code></pre>
+
+        </section>
+
+        <section>
+          
+          <h2>Exemplo 2</h2>
+
+<pre><code data-trim class="http">
+POST /eleicoes2014/_search
+{
+ "size": 0,
+ "aggregations": {
+    "tipo_de_candidato": {
+     "terms": {
+        "field": "_type"
+      },
+      "aggregations": {
+        "por_partido": {
+          "terms": {
+            "field": "partido",
+            "size":2
+          }
+        },
+        "por_coligacao": {
+          "terms": {
+            "field": "coligacao",
+            "size":2
+          }
+        },
+        "numero_stats": {
+          "stats": {
+            "field": "numero"
+          }
+        }
       }
     }
-  }
+ }
 }
-'
-```
-					</script>
+</code></pre>
+
+        </section>
+
+        <section>
+          
+          <h2>Exemplo 2: Resultado</h2>
+
+<pre><code data-trim class="json">
+{
+  [...],
+  "hits": {
+      "total": 1898,
+      "max_score": 0,
+      "hits": []
+   },
+   "aggregations": {
+      "tipo_de_candidato": {
+         "buckets": [
+            {
+               "key": "dep_estadual",
+               "doc_count": 1200,
+               "numero_stats": {
+                  "count": 1200,
+                  "min": 10000,
+                  "max": 90999,
+                  "avg": 36122.61666666667,
+                  "sum": 43347140
+               },
+               "por_partido": {
+                  "buckets": [
+                     {
+                        "key": "PT do B",
+                        "doc_count": 85
+                     },
+                     {
+                        "key": "PC do B",
+                        "doc_count": 41
+                     }
+                  ]
+               },
+               "por_coligacao": {
+                  "buckets": [
+                     {
+                        "key": "PRP / PEN / PHS",
+                        "doc_count": 133
+                     },
+                     {
+                        "key": "PT / PROS / PMDB / PRB",
+                        "doc_count": 108
+                     }
+                  ]
+               }
+            },
+            {
+               "key": "dep_federal",
+               "doc_count": 698,
+               "numero_stats": {
+                  "count": 698,
+                  "min": 1000,
+                  "max": 9090,
+                  "avg": 3420.3409742120343,
+                  "sum": 2387398
+               },
+               "por_partido": {
+                  "buckets": [
+                     {
+                        "key": "PT do B",
+                        "doc_count": 55
+                     },
+                     {
+                        "key": "PSB",
+                        "doc_count": 37
+                     }
+                  ]
+               },
+               "por_coligacao": {
+                  "buckets": [
+                     {
+                        "key": "PTdo B / PRP / PHS / PEN",
+                        "doc_count": 81
+                     },
+                     {
+                        "key": "DEM / PSDB / PP / PR / PSD / SD",
+                        "doc_count": 47
+                     }
+                  ]
+               }
+            }
+         ]
+      }
+   }
+}
+</code></pre>
+
+        </section>
+
+				<section>
+          <h2>Visualização de dados (Kibana)</h2>
+					<img src="img/Screen-Shot-2014-02-25-at-4.42.52-PM.png" class="nobackground" />
 				</section>
 
-
-
-
-				<section data-markdown>
-					<script type="text/template">
-					## Agregações
-```
-{
-	"aggregations" : {
-	    "grades_stats" : {
-	    	"stats" : {
-	    		"field" : "grade"
-	    	} 
-    	}
-	}
-}
-```
-```
-{
-    ...
-
-    "aggregations": {
-        "grades_stats": {
-            "count": 6,
-            "min": 60,
-            "max": 98,
-            "avg": 78.5,
-            "sum": 471
-        }
-    }
-}
-```
-					</script>
+				<section>
+          <h2>Visualização de dados (Kibana)</h2>
+					<img src="img/Screen-Shot-2013-07-11-at-5.00.28-PM.png" class="nobackground" />
 				</section>
 
 				<section>
 					<h2>Obrigado!</h2>
 					<p>
-						<small><a href="http://aeciosantos.com">Aécio Santos</a> <br/> <a href="http://twitter.com/aeciosan">@aeciosan</a></small>
+						<small>
+            <a href="http://aeciosantos.com">Aécio Santos</a><br/>
+            <a href="http://twitter.com/aeciosan">@aeciosan</a><br/>
+            <a href="mailto:aecio@zunnit.com">aecio@zunnit.com</a>
+            </small>
 					</p>
 				</section>
 
@@ -345,7 +550,6 @@ $ curl -XGET 'http://localhost:9200/twitter/tweet/_search?search_type=count' -d 
 		<script src="js/reveal.min.js"></script>
 
 		<script>
-
 			// Full list of configuration options available here:
 			// https://github.com/hakimel/reveal.js#configuration
 			Reveal.initialize({
